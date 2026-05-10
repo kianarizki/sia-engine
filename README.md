@@ -1,5 +1,5 @@
 # SIA Engine — Safety Intelligence Advisory
-**Technical Assessment: AI Engineer | Maritime Logistics & Infrastructure**
+**Technical Assessment: AI Engineer**
 
 ---
 
