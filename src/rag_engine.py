@@ -116,17 +116,17 @@ def generate_advisory(insiden: dict) -> str:
     """Generate rekomendasi berbasis SOP untuk satu insiden."""
     sops = retrieve(
         description = str(insiden.get("description", "")),
-        hazard_l1   = str(insiden.get("hazard_l1", "")),
-        hazard_l2   = str(insiden.get("hazard_l2", "")),
+        hazard_l1 = str(insiden.get("hazard_l1", "")),
+        hazard_l2 = str(insiden.get("hazard_l2", "")),
     )
     # Join SOP references
-    ref_list  = " | ".join(s["ref"] for s in sops)
-    stop_ops  = insiden.get("golden_violated", False)
-    tier      = insiden.get("risk_tier", "")
-    score     = insiden.get("risk_score", "-")
-    rca       = insiden.get("rca_l2", insiden.get("rca_l1", "-"))
-    root      = insiden.get("root_cause", "-")
-    overdue   = insiden.get("status_overdue", "")
+    ref_list = " | ".join(s["ref"] for s in sops)
+    stop_ops = insiden.get("golden_violated", False)
+    tier = insiden.get("risk_tier", "")
+    score = insiden.get("risk_score", "-")
+    rca = insiden.get("rca_l2", insiden.get("rca_l1", "-"))
+    root = insiden.get("root_cause", "-")
+    overdue = insiden.get("status_overdue", "")
 
     tindakan_segera = (
         "Hentikan operasi segera dan isolasi area."

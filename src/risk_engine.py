@@ -1,8 +1,7 @@
 import pandas as pd
 
 SKOR_KONSEKUENSI = {"Major": 5, "Sedang": 3, "Minor": 1}
-SKOR_KEKERAPAN   = {"Sering": 5, "Mungkin": 4, "Kadang": 3,
-                    "Kemungkinan Kecil": 2, "Langka": 1}
+SKOR_KEKERAPAN = {"Sering": 5, "Mungkin": 4, "Kadang": 3, "Kemungkinan Kecil": 2, "Langka": 1}
 
 KATA_BAHAYA = [
     "patah", "putus", "jabuk", "bocor", "hangus",
