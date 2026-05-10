@@ -151,7 +151,7 @@ Dasar: pola dari data BEATS menunjukkan hubungan konsisten antara `hazard_catego
 | hazard_category | Pola di BEATS | Estimasi untuk AM Care | Alasan |
 |-----------------|--------------|----------------------|--------|
 | Unsafe acts | 2/2 record = Sedang | **Sedang** | Tindakan manusia yang salah — bisa diperbaiki dengan pelatihan, dampak tidak selalu fatal |
-| Unsafe conditions | 11x Major, 4x Sedang | **Sedang** (konservatif) | Kondisi fisik berbahaya. Mayoritas Major di BEATS, tapi kita pakai Sedang sebagai nilai konservatif agar tidak overestimate |
+| Unsafe conditions | 11x Major, 4x Sedang | **Sedang** (konservatif) | Kondisi fisik berbahaya. Mayoritas Major di BEATS, tapi saya pakai Sedang sebagai nilai konservatif agar tidak overestimate |
 
 #### Estimasi `kekerapan` dari `hazard_l2`
 
