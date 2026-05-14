@@ -385,47 +385,55 @@ Ada dua alur autentikasi yang berbeda tergantung siapa yang mengakses sistem:
 Ini untuk user manusia yang membuka aplikasi SIA via browser.
 
 ```
-User buka browser → klik SIA App (Databricks Apps)
+User membuka aplikasi SIA melalui browser
         ↓
-Databricks redirect ke halaman login perusahaan
-(Microsoft Entra ID / Okta)
+Sistem mengarahkan user ke halaman login perusahaan (SSO)
         ↓
-User input username + password perusahaan
+User login menggunakan akun perusahaan
         ↓
-Entra ID / Okta kirim "authorization code" ke Databricks
+Sistem autentikasi perusahaan memverifikasi user
         ↓
-Databricks tukar authorization code → JWT access token
+Sistem memberikan access token sementara
         ↓
-Token disimpan di session Streamlit
+Token disimpan di session aplikasi
         ↓
-Setiap query ke Unity Catalog pakai token ini
+Setiap akses data menggunakan token tersebut
         ↓
-Unity Catalog cek role dari token → enforce filter data
+Sistem memeriksa role user sebelum memberikan akses data
 ```
 
-Keuntungan: user tidak pernah memasukkan password langsung ke aplikasi SIA. Password hanya masuk ke halaman login perusahaan (Entra ID/Okta) yang sudah terjamin keamanannya.
+Keuntungan pendekatan ini:
+- User tidak pernah memasukkan password langsung ke aplikasi SIA
+- Seluruh proses login dilakukan melalui sistem autentikasi perusahaan yang lebih aman dan terpusat
+- Access token memiliki masa berlaku terbatas sehingga lebih aman dibanding password permanen
+- Hak akses data dapat dibatasi berdasarkan role user
 
 #### Alur 2 — M2M Client Credentials Flow (untuk pipeline batch otomatis)
 
 Ini untuk proses yang berjalan otomatis tanpa ada manusia yang login, misalnya pipeline yang setiap 15 menit mengambil data baru dari BEATS dan AM Care.
 
 ```
-Pipeline scheduler (Databricks Jobs) jalan otomatis
+Pipeline otomatis berjalan sesuai jadwal
         ↓
-Pipeline punya Service Principal
-(akun khusus untuk mesin, bukan manusia)
+Sistem menggunakan Service Account khusus mesin
         ↓
-Service Principal kirim client_id + client_secret
-ke Databricks OAuth endpoint
+Service Account meminta access token secara aman
         ↓
-Databricks balas dengan access token (berlaku 1 jam)
+Sistem autentikasi memberikan token sementara
         ↓
-Pipeline pakai token untuk baca/tulis Unity Catalog
+Pipeline menggunakan token untuk baca/tulis data
         ↓
-Token expired → minta token baru otomatis (tidak ada interupsi)
+Token diperbarui otomatis saat expired
 ```
 
-Credentials Service Principal (client_id, client_secret) disimpan di **Databricks Secrets** — tidak pernah ditulis di kode atau environment variable yang bisa dilihat user.
+Credential Protection
+Credential Service Account (client_id, client_secret) disimpan di secure secret manager dan tidak pernah ditulis langsung di source code maupun environment variable yang dapat dilihat user.
+
+Keuntungan pendekatan ini:
+- Pipeline tetap dapat berjalan otomatis tanpa login manual
+- Credential tidak terekspos di kode aplikasi
+- Access token memiliki masa berlaku terbatas dan diperbarui otomatis
+- Hak akses pipeline dapat dibatasi sesuai kebutuhan proses ingestion
 
 #### Row-Level Security di Unity Catalog
 
@@ -447,15 +455,16 @@ Budi hanya mendapat data wilayah Berau-Kaltim
 Safety Manager mendapat semua data
 ```
 
-#### Ringkasan Komponen Keamanan
+#### Ringkasan Arsitektur Keamanan
 
-| Komponen | Teknologi | Keterangan |
+| Komponen | Fungsi | Implementasi |
 |----------|-----------|------------|
-| Autentikasi user | OIDC via Entra ID / Okta | SSO — satu login untuk semua aplikasi perusahaan |
-| Autentikasi pipeline | OAuth 2.0 M2M Client Credentials | Service Principal, tidak ada user manusia |
-| Token format | JWT (JSON Web Token) | Berisi role dan wilayah user, berlaku 1 jam |
-| Otorisasi data | Unity Catalog Row-Level Security | Filter otomatis per role/wilayah tanpa kode manual |
-| Penyimpanan secret | Databricks Secrets | API key LLM, Service Principal credentials — tidak pernah di kode |
+| User Authentication | Login user perusahaan secara aman | SSO — satu login untuk semua aplikasi perusahaan |
+| Automated Pipeline Authentication | Autentikasi proses otomatis tanpa login manual | Machine-to-Machine OAuth Flow |
+| Access Token | Token sementara untuk akses sistem | JWT (JSON Web Token) berisi role dan wilayah user, berlaku 1 jam |
+| Access Control | Pembatasan akses data berdasarkan role user | Role-Based Access Control (RBAC) |
+| Secret Management | Penyimpanan credential & API key secara aman | Secure Secret Manager |
+| Audit & Monitoring | Pencatatan aktivitas akses sistem | Audit logging & monitoring |
 
 ---
 
@@ -463,10 +472,10 @@ Safety Manager mendapat semua data
 
 | Sumber | Integrasi | Mapping ke CSE |
 |--------|-----------|----------------|
-| PMS (Technical) | Auto Loader dari REST API | Work order → `hazard_l1 = "Equipment Deficiency"` |
-| VTO (Operational) | Kafka streaming | Voyage incident → `fleet_area` |
-| CCTV | Computer Vision pipeline | PPE detection → `golden_violated` auto-populated |
-| Port Authority | Scheduled API batch | Audit eksternal → `source = "PORT_AUTH"` |
+| PMS (Technical Maintenance System) | Integrasi data maintenance kapal | Work order maintenance menjadi hazard equipment |
+| VTO (Operational Voyage System) | Integrasi data operasional pelayaran | Incident selama perjalanan kapal dikonversi menjadi data hazard operasional |
+| CCTV & Computer Vision | Deteksi otomatis pelanggaran safety | PPE violation atau unsafe behavior |
+| Port Authority System | Integrasi audit & inspeksi eksternal | Hasil audit pelabuhan masuk ke sistem safety |
 
 ---
 
