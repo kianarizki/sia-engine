@@ -473,17 +473,7 @@ Safety Manager mendapat semua data
 | Sumber | Integrasi | Mapping ke CSE |
 |--------|-----------|----------------|
 | PMS (Technical Maintenance System) | Integrasi data maintenance kapal | Work order maintenance menjadi hazard equipment |
-| VTO (Operational Voyage System) | Integrasi data operasional pelayaran | Incident selama perjalanan kapal dikonversi menjadi data hazard operasional |
+| VTO (Operational Voyage System) | Integrasi data operasional perjalanan kapal | Incident selama voyage seperti towing issue, engine problem, atau near miss dimasukkan sebagai safety event |
 | CCTV & Computer Vision | Deteksi otomatis pelanggaran safety | PPE violation atau unsafe behavior |
-| Port Authority System | Integrasi audit & inspeksi eksternal | Hasil audit pelabuhan masuk ke sistem safety |
-
----
-
-## Keterbatasan yang Diketahui
-
-| Keterbatasan | Dampak | Solusi di Production |
-|-------------|--------|---------------------|
-| Konsekuensi AM Care diestimasi dari `hazard_category` | Semua record AM Care dapat konsekuensi "Sedang" — tidak membedakan yang benar-benar Major | Tambah kolom `konsekuensi` di form input AM Care |
-| Kekerapan AM Care semua = Langka | Skor kekerapan selalu minimum (5 poin) untuk semua record AM Care | Tambah kolom `kekerapan` di form input AM Care |
-| 3 record BEATS punya konsekuensi dan kekerapan NULL | Dapat nilai default (14 poin konsekuensi, 5 poin kekerapan) | Wajibkan pengisian di form BEATS |
+| Port Authority System | Integrasi hasil audit dan inspeksi eksternal | Temuan audit pelabuhan seperti compliance issue, APAR expired, atau safety finding dimasukkan ke sistem safety |
 | Mock SOP bukan SOP asli perusahaan | Advisory berbasis SOP mock, bukan prosedur resmi | Ganti dengan SOP asli perusahaan di Vector Store |
